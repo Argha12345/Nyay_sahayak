@@ -6,7 +6,7 @@
 
 ---
 
-## 🏆 System Overview & Rubric Fulfillment
+## System Overview & Rubric Fulfillment
 
 | Evaluation Rubric | Weight | VeriJuris Performance |
 | :--- | :---: | :--- |
@@ -19,7 +19,7 @@
 
 ---
 
-## 🚀 The 4 Implemented Workflows
+## The 4 Implemented Workflows
 
 ### 1. Contract & Case Review
 * **Deep Document Reasoner:** Ingests complex legal records (FIRs, witness statements, bank compliance audits, boarding passes).
@@ -49,7 +49,7 @@
 
 ---
 
-## 🔬 Research Contribution & Empirical Ablation Study (25%)
+## Research Contribution & Empirical Ablation Study (25%)
 
 | Evaluation Dimension | 1. Baseline Naive RAG | 2. Lexical RAG + Prompt | 3. VeriJuris (Our System) |
 | :--- | :---: | :---: | :---: |
@@ -64,7 +64,7 @@ Standard LLM RAG pipelines suffer from **Citation Drift** and **Factual Extrapol
 
 ---
 
-## 💻 Tech Stack & Architecture (MERN with SQLite)
+## Tech Stack & Architecture (MERN with SQLite)
 
 * **Database (M):** SQLite (`better-sqlite3`) with WAL (Write-Ahead Logging) mode, foreign key integrity, and relational schema (`cases`, `documents`, `paragraphs`, `statutes`, `precedents`). Embedded, high-performance, and requires zero external database daemon.
 * **Backend (E & N):** Node.js (ESM), Express.js, Multer, PDF-Parse, Custom BM25 + Vector Ranking Engine, Multi-Stage Natural Language Inference (NLI) Verifier.
@@ -73,7 +73,7 @@ Standard LLM RAG pipelines suffer from **Citation Drift** and **Factual Extrapol
 
 ---
 
-## 🛠️ How to Run
+## How to Run
 
 ### Backend:
 ```bash
