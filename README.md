@@ -64,11 +64,12 @@ Standard LLM RAG pipelines suffer from **Citation Drift** and **Factual Extrapol
 
 ---
 
-## 💻 Tech Stack & Architecture
+## 💻 Tech Stack & Architecture (MERN with SQLite)
 
-* **Backend:** Node.js (ESM), Express.js, Multer, PDF-Parse, Custom BM25 + Vector Ranking Engine, Multi-Stage Natural Language Inference (NLI) Verifier.
-* **Frontend:** React 19, Vite 8, Tailwind CSS v4, Lucide Icons.
-* **Zero External API Dependency:** Operates 100% offline with zero external API key requirements out of the box, with built-in support for plug-in LLM keys.
+* **Database (M):** SQLite (`better-sqlite3`) with WAL (Write-Ahead Logging) mode, foreign key integrity, and relational schema (`cases`, `documents`, `paragraphs`, `statutes`, `precedents`). Embedded, high-performance, and requires zero external database daemon.
+* **Backend (E & N):** Node.js (ESM), Express.js, Multer, PDF-Parse, Custom BM25 + Vector Ranking Engine, Multi-Stage Natural Language Inference (NLI) Verifier.
+* **Frontend (R):** React 19, Vite 8, Tailwind CSS v4, Lucide Icons, LocalStorage sync.
+* **Zero External DB or API Dependency:** Operates 100% locally and offline out of the box with embedded SQLite and deterministic verification.
 
 ---
 

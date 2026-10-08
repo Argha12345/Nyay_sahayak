@@ -1,80 +1,119 @@
-import { SAMPLE_CASES } from '../data/sampleCases.js';
-import { STATUTES_CORPUS } from '../data/statutesCorpus.js';
-import { PRECEDENTS_CORPUS } from '../data/precedentsCorpus.js';
+import { db } from '../src/db/database.js';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const CUSTOM_CASES_FILE = path.resolve(__dirname, '../data/customCases.json');
 
 /**
- * In-Memory & File-Persistent Document Store & Lexical Chunking Indexer
+ * SQLite-Backed Relational Document Store & Lexical Chunking Indexer
+ * Full ACID transactions, relational indexing, and zero external DB service dependencies.
  */
 class DocumentStore {
-  constructor() {
-    this.cases = new Map();
-    this.customDocs = new Map();
-    this.statutes = STATUTES_CORPUS;
-    this.precedents = PRECEDENTS_CORPUS;
-
-    // Load initial benchmark cases
-    for (const c of SAMPLE_CASES) {
-      this.cases.set(c.id, JSON.parse(JSON.stringify(c)));
-    }
-
-    // Load persisted custom cases from disk
-    this.loadCustomCases();
-  }
-
-  loadCustomCases() {
-    try {
-      if (fs.existsSync(CUSTOM_CASES_FILE)) {
-        const data = fs.readFileSync(CUSTOM_CASES_FILE, 'utf-8');
-        const customCases = JSON.parse(data);
-        for (const [id, c] of Object.entries(customCases)) {
-          this.cases.set(id, c);
-        }
-      }
-    } catch (e) {
-      console.warn('[DocumentStore] Could not load persisted cases:', e.message);
-    }
-  }
-
-  saveCustomCases() {
-    try {
-      const sampleMap = new Map(SAMPLE_CASES.map(c => [c.id, c]));
-      const toSave = {};
-      for (const [id, c] of this.cases.entries()) {
-        const seed = sampleMap.get(id);
-        // Persist if it's a new custom case or if documents were added to an existing case
-        if (!seed || c.documents?.length > (seed.documents?.length || 0)) {
-          toSave[id] = c;
-        }
-      }
-      fs.writeFileSync(CUSTOM_CASES_FILE, JSON.stringify(toSave, null, 2), 'utf-8');
-    } catch (e) {
-      console.warn('[DocumentStore] Could not persist cases:', e.message);
-    }
-  }
-
-  getAllCases() {
-    return Array.from(this.cases.values()).map(c => ({
-      id: c.id,
-      title: c.title,
-      type: c.type,
-      category: c.category,
-      summary: c.summary,
-      docCount: c.documents?.length || 0,
-      knownContradictionsCount: c.knownContradictions?.length || 0,
-      missingInfoCount: c.missingInformation?.length || 0
+  /**
+   * Return all statutory provisions loaded from SQLite
+   */
+  get statutes() {
+    const rows = db.prepare('SELECT * FROM statutes').all();
+    return rows.map((r) => ({
+      id: r.id,
+      code: r.code,
+      section: r.section,
+      title: r.title,
+      verifiableText: r.verifiable_text,
+      crossReference: r.cross_reference,
+      summary: r.summary,
+      keywords: JSON.parse(r.keywords || '[]')
     }));
   }
 
+  /**
+   * Return all landmark Supreme Court precedents loaded from SQLite
+   */
+  get precedents() {
+    const rows = db.prepare('SELECT * FROM precedents').all();
+    return rows.map((r) => ({
+      id: r.id,
+      caseTitle: r.case_title,
+      citation: r.citation,
+      court: r.court,
+      year: r.year,
+      bench: r.bench,
+      domain: r.domain,
+      ratioDecidendi: r.ratio_decidendi,
+      applicabilityTest: r.applicability_test,
+      keyQuotes: JSON.parse(r.key_quotes || '[]'),
+      keywords: JSON.parse(r.keywords || '[]')
+    }));
+  }
+
+  /**
+   * Return high-level summary of all active cases from SQLite
+   */
+  getAllCases() {
+    const rows = db.prepare(`
+      SELECT 
+        c.id, c.title, c.type, c.category, c.summary, 
+        c.known_contradictions, c.missing_information,
+        COUNT(d.id) AS docCount
+      FROM cases c
+      LEFT JOIN documents d ON c.id = d.case_id
+      GROUP BY c.id
+      ORDER BY c.created_at ASC
+    `).all();
+
+    return rows.map((r) => {
+      const contradictions = JSON.parse(r.known_contradictions || '[]');
+      const missingInfo = JSON.parse(r.missing_information || '[]');
+      return {
+        id: r.id,
+        title: r.title,
+        type: r.type,
+        category: r.category,
+        summary: r.summary,
+        docCount: r.docCount,
+        knownContradictionsCount: contradictions.length,
+        missingInfoCount: missingInfo.length
+      };
+    });
+  }
+
+  /**
+   * Retrieve complete case record with all documents and paragraphs
+   */
   getCaseById(caseId) {
-    return this.cases.get(caseId) || null;
+    const caseRow = db.prepare('SELECT * FROM cases WHERE id = ?').get(caseId);
+    if (!caseRow) return null;
+
+    const docRows = db.prepare('SELECT * FROM documents WHERE case_id = ? ORDER BY created_at ASC').all(caseId);
+    const paraStmt = db.prepare('SELECT * FROM paragraphs WHERE doc_id = ? ORDER BY para_num ASC');
+
+    const documents = docRows.map((d) => {
+      const paragraphs = paraStmt.all(d.id).map((p) => ({
+        paraId: p.para_id,
+        paraNum: p.para_num,
+        text: p.text,
+        charCount: p.char_count
+      }));
+
+      return {
+        id: d.id,
+        title: d.title,
+        type: d.type,
+        date: d.date,
+        source: d.source,
+        paragraphs
+      };
+    });
+
+    return {
+      id: caseRow.id,
+      title: caseRow.title,
+      type: caseRow.type,
+      category: caseRow.category,
+      summary: caseRow.summary,
+      groundTruthFacts: JSON.parse(caseRow.ground_truth_facts || '[]'),
+      knownContradictions: JSON.parse(caseRow.known_contradictions || '[]'),
+      missingInformation: JSON.parse(caseRow.missing_information || '[]'),
+      targetWorkflows: JSON.parse(caseRow.target_workflows || '[]'),
+      documents
+    };
   }
 
   /**
@@ -82,11 +121,10 @@ class DocumentStore {
    */
   chunkText(rawText, docId, docTitle) {
     if (!rawText) return [];
-    // Split on double newlines or paragraph patterns
     const rawParagraphs = rawText
       .split(/\n\s*\n/)
-      .map(p => p.trim())
-      .filter(p => p.length > 20);
+      .map((p) => p.trim())
+      .filter((p) => p.length > 20);
 
     return rawParagraphs.map((text, idx) => {
       const paraNum = idx + 1;
@@ -102,7 +140,7 @@ class DocumentStore {
   }
 
   /**
-   * Register a newly uploaded document or custom case
+   * Register a newly uploaded document or custom case into SQLite
    */
   addCustomDocument(caseId, docData) {
     const docId = docData.id || `DOC-USER-${uuidv4().substring(0, 8).toUpperCase()}`;
@@ -124,59 +162,94 @@ class DocumentStore {
       ]
     };
 
-    let result;
-    if (caseId && this.cases.has(caseId)) {
-      const existingCase = this.cases.get(caseId);
-      existingCase.documents = existingCase.documents || [];
-      existingCase.documents.push(newDoc);
-      result = { caseId, doc: newDoc };
-    } else {
-      // Create new case envelope
-      const newCaseId = caseId || `CASE-CUSTOM-${uuidv4().substring(0, 8).toUpperCase()}`;
-      const newCase = {
-        id: newCaseId,
-        title: docData.caseTitle || `Custom Case: ${newDoc.title}`,
-        type: docData.type || 'Ad-Hoc Review',
-        category: 'Uploaded Dossier',
-        summary: `User provided case documentation with ${newDoc.paragraphs.length} paragraphs.`,
-        documents: [newDoc],
-        groundTruthFacts: [],
-        knownContradictions: [],
-        missingInformation: []
-      };
-      this.cases.set(newCaseId, newCase);
-      result = { caseId: newCaseId, doc: newDoc };
-    }
+    let targetCaseId = caseId;
 
-    // Persist to disk so refresh and restarts retain the uploaded dossier
-    this.saveCustomCases();
-    return result;
+    const insertCaseStmt = db.prepare(`
+      INSERT INTO cases (
+        id, title, type, category, summary, 
+        ground_truth_facts, known_contradictions, missing_information, target_workflows
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const insertDocStmt = db.prepare(`
+      INSERT INTO documents (
+        id, case_id, title, type, date, source, content
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const insertParaStmt = db.prepare(`
+      INSERT INTO paragraphs (
+        para_id, doc_id, case_id, para_num, text, char_count
+      ) VALUES (?, ?, ?, ?, ?, ?)
+    `);
+
+    const transaction = db.transaction(() => {
+      // If case doesn't exist, create new case envelope
+      const existing = targetCaseId ? db.prepare('SELECT id FROM cases WHERE id = ?').get(targetCaseId) : null;
+      if (!existing) {
+        targetCaseId = targetCaseId || `CASE-CUSTOM-${uuidv4().substring(0, 8).toUpperCase()}`;
+        insertCaseStmt.run(
+          targetCaseId,
+          docData.caseTitle || `Custom Case: ${newDoc.title}`,
+          docData.type || 'Ad-Hoc Review',
+          'Uploaded Dossier',
+          `User provided case documentation with ${newDoc.paragraphs.length} paragraphs.`,
+          JSON.stringify([]),
+          JSON.stringify([]),
+          JSON.stringify([]),
+          JSON.stringify(['case_review', 'legal_drafting', 'legal_research', 'rag_chat'])
+        );
+      }
+
+      // Insert document
+      insertDocStmt.run(
+        newDoc.id,
+        targetCaseId,
+        newDoc.title,
+        newDoc.type,
+        newDoc.date,
+        newDoc.source,
+        docData.content || ''
+      );
+
+      // Insert paragraphs
+      for (const p of newDoc.paragraphs) {
+        insertParaStmt.run(
+          p.paraId,
+          newDoc.id,
+          targetCaseId,
+          p.paraNum,
+          p.text,
+          p.text.length
+        );
+      }
+    });
+
+    transaction();
+
+    return { caseId: targetCaseId, doc: newDoc };
   }
 
   /**
-   * Collect all atomic chunks for a given case plus statutory/precedent reference library
+   * Collect all atomic chunks for a given case from SQLite
    */
   getAllChunksForCase(caseId) {
-    const targetCase = this.getCaseById(caseId);
-    if (!targetCase || !targetCase.documents) return [];
+    const rows = db.prepare(`
+      SELECT 
+        p.para_id AS chunkId,
+        p.doc_id AS docId,
+        d.title AS docTitle,
+        d.type AS docType,
+        p.para_num AS paraNum,
+        p.text AS text,
+        'CASE_RECORD' AS sourceType
+      FROM paragraphs p
+      JOIN documents d ON p.doc_id = d.id
+      WHERE p.case_id = ?
+      ORDER BY d.id, p.para_num ASC
+    `).all(caseId);
 
-    const chunks = [];
-    for (const doc of targetCase.documents) {
-      if (!doc.paragraphs) continue;
-      for (const p of doc.paragraphs) {
-        chunks.push({
-          chunkId: p.paraId,
-          docId: doc.id,
-          docTitle: doc.title,
-          docType: doc.type,
-          paraNum: p.paraNum,
-          text: p.text,
-          sourceType: 'CASE_RECORD'
-        });
-      }
-    }
-
-    return chunks;
+    return rows;
   }
 
   /**
@@ -185,7 +258,7 @@ class DocumentStore {
   getGlobalCorpusChunks(caseId) {
     const caseChunks = caseId ? this.getAllChunksForCase(caseId) : [];
 
-    const statuteChunks = this.statutes.map(s => ({
+    const statuteChunks = this.statutes.map((s) => ({
       chunkId: s.id,
       docId: s.id,
       docTitle: `${s.section} - ${s.title}`,
@@ -196,7 +269,7 @@ class DocumentStore {
       sourceType: 'STATUTE'
     }));
 
-    const precedentChunks = this.precedents.map(p => ({
+    const precedentChunks = this.precedents.map((p) => ({
       chunkId: p.id,
       docId: p.id,
       docTitle: `${p.caseTitle} [${p.citation}]`,

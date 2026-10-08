@@ -11,4 +11,8 @@ export const config = {
   uploadLimit: '50mb',
   systemName: 'VeriJuris Agentic Legal Assistant',
   version: '2.0.0',
+  database: {
+    type: 'sqlite',
+    filename: 'verijuris.db'
+  }
 };

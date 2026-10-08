@@ -7,6 +7,7 @@ const server = app.listen(config.port, () => {
   console.log(`====================================================`);
   console.log(`[${config.systemName}] v${config.version}`);
   console.log(`Server actively running on http://localhost:${config.port}`);
+  console.log(`Database: SQLite (${config.database.filename}) [ACID Relational Engine]`);
   console.log(`Environment: ${config.env}`);
   console.log(`====================================================`);
 });
