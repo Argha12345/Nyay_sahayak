@@ -3,12 +3,16 @@ import { Send, Bot, User, ShieldCheck, Sparkles, Info, RotateCcw } from 'lucide-
 import CitationBadge from '../components/common/CitationBadge';
 import { chatApi } from '../api';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { TAMIL_TRANSLATIONS } from '../utils/tamilLocale';
 
-export default function RagChatView({ activeCase, onSelectCitation, isSimpleMode }) {
+export default function RagChatView({ activeCase, onSelectCitation, isSimpleMode, language = 'en' }) {
+  const isTa = language === 'ta';
   const initialGreeting = [
     {
       role: 'assistant',
-      text: `Hello! I am your **Verifiable Legal Assistant**. I reason exclusively over the ingested case dossier and verified statutes/precedents. Every fact I assert and citation I reference is traceable to source records with zero fabrication. How can I assist you with **${activeCase?.title || 'this case'}**?`,
+      text: isTa
+        ? TAMIL_TRANSLATIONS.chatGreeting
+        : `Hello! I am your **Verifiable Legal Assistant**. I reason exclusively over the ingested case dossier and verified statutes/precedents. Every fact I assert and citation I reference is traceable to source records with zero fabrication. How can I assist you with **${activeCase?.title || 'this case'}**?`,
       citations: [],
       groundednessScore: 100
     }
@@ -149,11 +153,11 @@ export default function RagChatView({ activeCase, onSelectCitation, isSimpleMode
             title="Clear Chat History for this case"
           >
             <RotateCcw className="w-3 h-3" />
-            <span>Clear Chat</span>
+            <span>{isTa ? TAMIL_TRANSLATIONS.clearChatBtn : 'Clear Chat'}</span>
           </button>
           <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 font-semibold flex items-center gap-1.5">
             <ShieldCheck className="w-3 h-3 text-emerald-600" />
-            <span>Anti-Hallucination Guardrail Active</span>
+            <span>{isTa ? '100% பொய்மை அற்றது' : 'Anti-Hallucination Guardrail Active'}</span>
           </span>
         </div>
       </div>
@@ -253,7 +257,7 @@ export default function RagChatView({ activeCase, onSelectCitation, isSimpleMode
         >
           <input
             type="text"
-            placeholder={isSimpleMode ? "Ask any question about the case facts or law..." : "Ask anything about the case facts, statutes, contradictions, or evidence..."}
+            placeholder={isTa ? TAMIL_TRANSLATIONS.chatInputPlaceholder : (isSimpleMode ? "Ask any question about the case facts or law..." : "Ask anything about the case facts, statutes, contradictions, or evidence...")}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className="flex-1 px-4 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-blue-600 font-medium"
@@ -264,7 +268,7 @@ export default function RagChatView({ activeCase, onSelectCitation, isSimpleMode
             className="px-5 py-2 rounded-lg bg-[#1d4ed8] hover:bg-[#1e40af] disabled:opacity-50 text-white text-xs font-semibold shadow-xs transition cursor-pointer flex items-center gap-1.5 active:scale-95 border border-blue-700/30"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>Send</span>
+            <span>{isTa ? TAMIL_TRANSLATIONS.sendBtn : 'Send'}</span>
           </button>
         </form>
       </div>

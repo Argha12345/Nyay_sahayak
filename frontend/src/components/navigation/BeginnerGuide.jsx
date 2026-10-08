@@ -1,7 +1,10 @@
 import React from 'react';
 import { HelpCircle, X, FileSearch, Scale, MessageSquare } from 'lucide-react';
+import { TAMIL_TRANSLATIONS } from '../../utils/tamilLocale';
 
-export default function BeginnerGuide({ onClose, isSimpleMode, onSelectTab }) {
+export default function BeginnerGuide({ onClose, isSimpleMode, onSelectTab, language = 'en' }) {
+  const isTa = language === 'ta';
+
   return (
     <div className="bg-white border border-blue-200 rounded-xl p-5 shadow-sm relative overflow-hidden mb-6">
       <div className="flex items-start justify-between gap-4 mb-4">
@@ -11,13 +14,15 @@ export default function BeginnerGuide({ onClose, isSimpleMode, onSelectTab }) {
           </div>
           <div>
             <h2 className="text-sm font-bold text-[#0f2d59] flex items-center gap-2">
-              <span>New to e-Nyay Sahayak? Quick 60-Second Beginners Guide</span>
+              <span>{isTa ? TAMIL_TRANSLATIONS.guideTitle : 'New to e-Nyay Sahayak? Quick 60-Second Beginners Guide'}</span>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-medium">
-                Simple Guide
+                {isTa ? TAMIL_TRANSLATIONS.guideBadge : 'Simple Guide'}
               </span>
             </h2>
             <p className="text-xs text-slate-500">
-              Unlike normal AI, this portal <strong>cannot make up fake facts or fake laws</strong>. Every claim is verified with source evidence.
+              {isTa ? TAMIL_TRANSLATIONS.guideSubtitle : (
+                <>Unlike normal AI, this portal <strong>cannot make up fake facts or fake laws</strong>. Every claim is verified with source evidence.</>
+              )}
             </p>
           </div>
         </div>
@@ -43,10 +48,10 @@ export default function BeginnerGuide({ onClose, isSimpleMode, onSelectTab }) {
             <FileSearch className="w-4 h-4 text-slate-400 group-hover:text-blue-700 transition" />
           </div>
           <h3 className="text-xs font-bold text-slate-900 group-hover:text-blue-900 transition">
-            1. Find Contradictions & Missing Proof
+            {isTa ? TAMIL_TRANSLATIONS.guideStep1Title : '1. Find Contradictions & Missing Proof'}
           </h3>
           <p className="text-[11px] text-slate-600 leading-relaxed">
-            The AI reads all case documents side-by-side. It immediately spots when someone's story doesn't match real records (e.g. complainant says cash was handed over in Bangalore, but passport logs show accused was in Singapore!).
+            {isTa ? TAMIL_TRANSLATIONS.guideStep1Desc : "The AI reads all case documents side-by-side. It immediately spots when someone's story doesn't match real records (e.g. complainant says cash was handed over in Bangalore, but passport logs show accused was in Singapore!)."}
           </p>
         </div>
 
@@ -60,10 +65,10 @@ export default function BeginnerGuide({ onClose, isSimpleMode, onSelectTab }) {
             <Scale className="w-4 h-4 text-slate-400 group-hover:text-emerald-700 transition" />
           </div>
           <h3 className="text-xs font-bold text-slate-900 group-hover:text-emerald-900 transition">
-            2. Get Court-Ready Documents
+            {isTa ? TAMIL_TRANSLATIONS.guideStep2Title : '2. Get Court-Ready Documents'}
           </h3>
           <p className="text-[11px] text-slate-600 leading-relaxed">
-            Generate formal Bail Petitions or Legal Notices. Every sentence contains a clickable proof badge. Click any badge to view the exact original paragraph and verified Supreme Court rule.
+            {isTa ? TAMIL_TRANSLATIONS.guideStep2Desc : "Generate formal Bail Petitions or Legal Notices. Every sentence contains a clickable proof badge. Click any badge to view the exact original paragraph and verified Supreme Court rule."}
           </p>
         </div>
 
@@ -77,10 +82,10 @@ export default function BeginnerGuide({ onClose, isSimpleMode, onSelectTab }) {
             <MessageSquare className="w-4 h-4 text-slate-400 group-hover:text-blue-700 transition" />
           </div>
           <h3 className="text-xs font-bold text-slate-900 group-hover:text-blue-900 transition">
-            3. Ask Any Question With Guaranteed Proof
+            {isTa ? TAMIL_TRANSLATIONS.guideStep3Title : '3. Ask Any Question With Guaranteed Proof'}
           </h3>
           <p className="text-[11px] text-slate-600 leading-relaxed">
-            Ask any question in plain English. If evidence doesn't exist, the AI says so rather than making things up. Guaranteed 100% zero fabricated answers.
+            {isTa ? TAMIL_TRANSLATIONS.guideStep3Desc : "Ask any question in plain English. If evidence doesn't exist, the AI says so rather than making things up. Guaranteed 100% zero fabricated answers."}
           </p>
         </div>
       </div>

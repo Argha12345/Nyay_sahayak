@@ -3,8 +3,10 @@ import { ShieldCheck, XCircle, Sparkles, RefreshCw, Info } from 'lucide-react';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { ablationApi } from '../api';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { TAMIL_TRANSLATIONS } from '../utils/tamilLocale';
 
-export default function AblationBenchmarkView({ activeCase, onSelectCitation, isSimpleMode }) {
+export default function AblationBenchmarkView({ activeCase, onSelectCitation, isSimpleMode, language = 'en' }) {
+  const isTa = language === 'ta';
   const getDefaultQuery = () => {
     if (activeCase?.id === 'CASE-COMM-002') {
       return 'Can Quantix legally enforce 100% liquidated damages under Clause 14.1?';
@@ -79,10 +81,16 @@ export default function AblationBenchmarkView({ activeCase, onSelectCitation, is
               <span className="text-xs text-slate-500 font-medium">Controlled Empirical Ablation Study</span>
             </div>
             <h2 className="text-lg font-bold text-[#0f2d59] mt-1">
-              {isSimpleMode ? 'Ordinary AI vs. VeriJuris Head-to-Head Comparison' : 'VeriJuris vs. Leading Naive RAG Baseline'}
+              {isTa
+                ? TAMIL_TRANSLATIONS.benchmarkTitle
+                : isSimpleMode
+                ? 'Ordinary AI vs. VeriJuris Head-to-Head Comparison'
+                : 'VeriJuris vs. Leading Naive RAG Baseline'}
             </h2>
             <p className="text-xs text-slate-600 mt-1 max-w-3xl leading-relaxed">
-              Standard RAG pipelines optimize for surface fluency and sentence coherence, leading to disastrous hallucinations of phantom precedents and ungrounded facts in legal disputes. VeriJuris replaces blind generation with a deterministic multi-stage claim decomposition and NLI entailment gate.
+              {isTa
+                ? TAMIL_TRANSLATIONS.benchmarkDesc
+                : 'Standard RAG pipelines optimize for surface fluency and sentence coherence, leading to disastrous hallucinations of phantom precedents and ungrounded facts in legal disputes. VeriJuris replaces blind generation with a deterministic multi-stage claim decomposition and NLI entailment gate.'}
             </p>
           </div>
 
@@ -92,7 +100,7 @@ export default function AblationBenchmarkView({ activeCase, onSelectCitation, is
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#1d4ed8] hover:bg-[#1e40af] text-white text-xs font-semibold shadow-xs transition cursor-pointer shrink-0 active:scale-95 border border-blue-700/30"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>Run Live Head-to-Head Test</span>
+            <span>{isTa ? TAMIL_TRANSLATIONS.runBenchmarkBtn : 'Run Live Head-to-Head Test'}</span>
           </button>
         </div>
 

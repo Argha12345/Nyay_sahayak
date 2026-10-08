@@ -4,8 +4,10 @@ import CitationBadge from '../components/common/CitationBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { researchApi } from '../api';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { TAMIL_TRANSLATIONS } from '../utils/tamilLocale';
 
-export default function LegalResearchView({ activeCase, onSelectCitation, isSimpleMode }) {
+export default function LegalResearchView({ activeCase, onSelectCitation, isSimpleMode, language = 'en' }) {
+  const isTa = language === 'ta';
   const [researchData, setResearchData] = useState(null);
   const [query, setQuery] = useLocalStorage(`verijuris_research_q_${activeCase?.id || 'default'}`, '');
   const [loading, setLoading] = useState(false);
@@ -59,10 +61,10 @@ export default function LegalResearchView({ activeCase, onSelectCitation, isSimp
       <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs space-y-4">
         <div>
           <h3 className="text-sm font-bold text-[#0f2d59]">
-            {isSimpleMode ? 'Legal Research & Supreme Court Rulings' : 'Authoritative Legal Research & Judicial Ratio Index'}
+            {isTa ? TAMIL_TRANSLATIONS.researchTitle : (isSimpleMode ? 'Legal Research & Supreme Court Rulings' : 'Authoritative Legal Research & Judicial Ratio Index')}
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Every legal precedent cited carries verifiable SCC/AIR reporter citations, designated benches, and binding ratios.
+            {isTa ? TAMIL_TRANSLATIONS.researchDesc : 'Every legal precedent cited carries verifiable SCC/AIR reporter citations, designated benches, and binding ratios.'}
           </p>
         </div>
 
@@ -71,7 +73,7 @@ export default function LegalResearchView({ activeCase, onSelectCitation, isSimp
             <Search className="w-4 h-4 text-slate-400 absolute left-4 top-3" />
             <input
               type="text"
-              placeholder="Search statutes, landmark rulings, legal tests (e.g., Section 41A arrest notice, Satender Antil, Section 74 penalty)..."
+              placeholder={isTa ? TAMIL_TRANSLATIONS.searchPlaceholder : "Search statutes, landmark rulings, legal tests (e.g., Section 41A arrest notice, Satender Antil, Section 74 penalty)..."}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-blue-600 font-medium"
@@ -81,7 +83,7 @@ export default function LegalResearchView({ activeCase, onSelectCitation, isSimp
             type="submit"
             className="px-6 py-2.5 rounded-lg bg-[#1d4ed8] hover:bg-[#1e40af] text-white text-xs font-semibold shadow-xs transition cursor-pointer active:scale-95 border border-blue-700/30"
           >
-            Search Laws
+            {isTa ? TAMIL_TRANSLATIONS.searchBtn : 'Search Laws'}
           </button>
         </form>
 
@@ -93,7 +95,7 @@ export default function LegalResearchView({ activeCase, onSelectCitation, isSimp
               activeFilter === 'bridges' ? 'bg-[#1d4ed8] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
             }`}
           >
-            {isSimpleMode ? 'Fact & Law Bridges' : `Case-Law Bridges (${researchData?.factualBridges?.length || 0})`}
+            {isTa ? TAMIL_TRANSLATIONS.filterBridges : (isSimpleMode ? 'Fact & Law Bridges' : `Case-Law Bridges (${researchData?.factualBridges?.length || 0})`)}
           </button>
           <button
             onClick={() => setActiveFilter('precedents')}
@@ -101,7 +103,7 @@ export default function LegalResearchView({ activeCase, onSelectCitation, isSimp
               activeFilter === 'precedents' ? 'bg-[#1d4ed8] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
             }`}
           >
-            {isSimpleMode ? 'Supreme Court Rulings' : `Precedents (${researchData?.matchedPrecedents?.length || 0})`}
+            {isTa ? TAMIL_TRANSLATIONS.filterPrecedents : (isSimpleMode ? 'Supreme Court Rulings' : `Precedents (${researchData?.matchedPrecedents?.length || 0})`)}
           </button>
           <button
             onClick={() => setActiveFilter('statutes')}
@@ -109,7 +111,7 @@ export default function LegalResearchView({ activeCase, onSelectCitation, isSimp
               activeFilter === 'statutes' ? 'bg-[#1d4ed8] text-white shadow-xs' : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
             }`}
           >
-            {isSimpleMode ? 'Statutory Sections' : `Statutory Codes (${researchData?.matchedStatutes?.length || 0})`}
+            {isTa ? TAMIL_TRANSLATIONS.filterStatutes : (isSimpleMode ? 'Statutory Sections' : `Statutory Codes (${researchData?.matchedStatutes?.length || 0})`)}
           </button>
         </div>
       </div>

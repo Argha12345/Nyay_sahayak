@@ -5,8 +5,10 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import PleadingPdfModal from '../components/modals/PleadingPdfModal';
 import { draftApi } from '../api';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { TAMIL_TRANSLATIONS } from '../utils/tamilLocale';
 
-export default function DraftingStudioView({ activeCase, onSelectCitation, isSimpleMode }) {
+export default function DraftingStudioView({ activeCase, onSelectCitation, isSimpleMode, language = 'en' }) {
+  const isTa = language === 'ta';
   const isContract = activeCase?.type?.toLowerCase().includes('contract') || activeCase?.type?.toLowerCase().includes('commercial');
   const defaultTemplate = isContract ? 'legal_notice' : 'bail_application';
 
@@ -110,10 +112,12 @@ export default function DraftingStudioView({ activeCase, onSelectCitation, isSim
           </div>
           <div>
             <h3 className="text-sm font-bold text-[#0f2d59]">
-              {isSimpleMode ? 'Court Document Drafting Studio' : 'Zero-Hallucination Legal Drafting Studio'}
+              {isTa ? TAMIL_TRANSLATIONS.draftStudioTitle : (isSimpleMode ? 'Court Document Drafting Studio' : 'Zero-Hallucination Legal Drafting Studio')}
             </h3>
             <p className="text-xs text-slate-500">
-              {isSimpleMode
+              {isTa
+                ? TAMIL_TRANSLATIONS.draftStudioDesc
+                : isSimpleMode
                 ? 'Ready-to-file legal pleadings: every claim is proven with official case records and Supreme Court ratios.'
                 : 'Every drafted statement is anchored to verified case evidence and binding Supreme Court ratios.'}
             </p>
@@ -126,9 +130,15 @@ export default function DraftingStudioView({ activeCase, onSelectCitation, isSim
             onChange={(e) => setTemplateType(e.target.value)}
             className="px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-blue-600 cursor-pointer"
           >
-            <option value="bail_application">Regular Bail Application (S. 483 BNSS / 439 CrPC)</option>
-            <option value="legal_notice">Rebuttal Notice / S. 74 Damages (Contract Act)</option>
-            <option value="petition">General Legal Memorandum / Grounds</option>
+            <option value="bail_application">
+              {isTa ? TAMIL_TRANSLATIONS.templateBail : 'Regular Bail Application (S. 483 BNSS / 439 CrPC)'}
+            </option>
+            <option value="legal_notice">
+              {isTa ? TAMIL_TRANSLATIONS.templateNotice : 'Rebuttal Notice / S. 74 Damages (Contract Act)'}
+            </option>
+            <option value="petition">
+              {isTa ? TAMIL_TRANSLATIONS.templatePetition : 'General Legal Memorandum / Grounds'}
+            </option>
           </select>
 
           <button
@@ -137,7 +147,7 @@ export default function DraftingStudioView({ activeCase, onSelectCitation, isSim
             className="flex items-center gap-2 px-5 py-2 rounded-lg bg-[#1d4ed8] hover:bg-[#1e40af] text-white text-xs font-semibold shadow-xs transition cursor-pointer active:scale-95 border border-blue-700/30"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>{isSimpleMode ? 'Generate Verified Draft' : 'Regenerate & Verify'}</span>
+            <span>{isTa ? TAMIL_TRANSLATIONS.generateDraftBtn : (isSimpleMode ? 'Generate Verified Draft' : 'Regenerate & Verify')}</span>
           </button>
         </div>
       </div>
@@ -186,7 +196,7 @@ export default function DraftingStudioView({ activeCase, onSelectCitation, isSim
                   title="Export Court Pleading with QR Code"
                 >
                   <FileDown className="w-3.5 h-3.5 text-blue-700" />
-                  <span>Export Court PDF</span>
+                  <span>{isTa ? TAMIL_TRANSLATIONS.exportCourtPdf : 'Export Court PDF'}</span>
                 </button>
                 <button
                   onClick={handleCopy}
@@ -194,7 +204,7 @@ export default function DraftingStudioView({ activeCase, onSelectCitation, isSim
                   title="Copy full text"
                 >
                   <Copy className="w-3.5 h-3.5" />
-                  <span>{copied ? 'Copied!' : 'Copy Text'}</span>
+                  <span>{copied ? (isTa ? TAMIL_TRANSLATIONS.copied : 'Copied!') : (isTa ? TAMIL_TRANSLATIONS.copyText : 'Copy Text')}</span>
                 </button>
               </div>
             </div>

@@ -21,6 +21,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 import EvidenceKnowledgeGraph from '../components/knowledgeGraph/EvidenceKnowledgeGraph';
 import { reviewApi } from '../api';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { TAMIL_TRANSLATIONS } from '../utils/tamilLocale';
 
 export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleMode, language = 'en' }) {
   const isTa = language === 'ta';
@@ -151,7 +152,7 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
           }`}
         >
           <Clock className={`w-3.5 h-3.5 ${activeSubTab === 'timeline' ? 'text-blue-200' : 'text-blue-600'}`} />
-          <span>Event Timeline</span>
+          <span>{isTa ? TAMIL_TRANSLATIONS.subtabTimeline : 'Event Timeline'}</span>
           <span className="px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-800 text-[10px]">
             {timeline.length}
           </span>
@@ -166,7 +167,7 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
           }`}
         >
           <Scale className={`w-3.5 h-3.5 ${activeSubTab === 'cross_exam' ? 'text-amber-300' : 'text-amber-600'}`} />
-          <span>Cross-Exam Questions</span>
+          <span>{isTa ? TAMIL_TRANSLATIONS.subtabCrossExam : 'Cross-Exam Questions'}</span>
           <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-800 text-[10px]">
             {crossExaminationQuestions.length}
           </span>
@@ -181,7 +182,7 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
           }`}
         >
           <Columns className={`w-3.5 h-3.5 ${activeSubTab === 'diff_viewer' ? 'text-emerald-300' : 'text-emerald-600'}`} />
-          <span>Evidence Diff Split-Screen</span>
+          <span>{isTa ? TAMIL_TRANSLATIONS.subtabDiff : 'Evidence Diff Split-Screen'}</span>
           <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 text-[10px]">
             {diffPairs.length}
           </span>
@@ -196,7 +197,7 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
           }`}
         >
           <HelpCircle className={`w-3.5 h-3.5 ${activeSubTab === 'missing_info' ? 'text-amber-300' : 'text-amber-600'}`} />
-          <span>Missing Proof Audit</span>
+          <span>{isTa ? TAMIL_TRANSLATIONS.subtabMissing : 'Missing Proof Audit'}</span>
           <span className="px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 text-[10px]">
             {missingInfoAudit.totalGapsIdentified}
           </span>
@@ -211,7 +212,7 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
           }`}
         >
           <CheckCircle2 className={`w-3.5 h-3.5 ${activeSubTab === 'facts' ? 'text-emerald-300' : 'text-emerald-600'}`} />
-          <span>Grounded Facts</span>
+          <span>{isTa ? TAMIL_TRANSLATIONS.subtabFacts : 'Grounded Facts'}</span>
           <span className="px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-800 text-[10px]">
             {keyFacts.length}
           </span>
@@ -226,7 +227,7 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-          <span>Raw Dossier Explorer</span>
+          <span>{isTa ? TAMIL_TRANSLATIONS.subtabDocs : 'Raw Dossier Explorer'}</span>
           <span className="px-1.5 py-0.2 rounded-full bg-slate-100 text-slate-800 text-[10px]">
             {documentsList.length}
           </span>

@@ -12,6 +12,7 @@ import EvidenceDrawer from './components/modals/EvidenceDrawer';
 import UploadModal from './components/modals/UploadModal';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import { ShieldCheck } from 'lucide-react';
+import { TAMIL_TRANSLATIONS } from './utils/tamilLocale';
 
 function AppContent() {
   const {
@@ -68,6 +69,7 @@ function AppContent() {
             onClose={() => setShowGuide(false)}
             isSimpleMode={isSimpleMode}
             onSelectTab={setActiveTab}
+            language={language}
           />
         )}
 
@@ -77,18 +79,19 @@ function AppContent() {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0f2d59] border border-blue-200">
-                  {isSimpleMode ? 'Selected Case Dossier' : activeCaseData.type}
+                  {language === 'ta' ? TAMIL_TRANSLATIONS.selectedDossier : (isSimpleMode ? 'Selected Case Dossier' : activeCaseData.type)}
                 </span>
                 <span className="text-xs text-slate-500">
-                  {activeCaseData.documents?.length || 0} Official Documents Ingested
+                  {activeCaseData.documents?.length || 0} {language === 'ta' ? TAMIL_TRANSLATIONS.documentsIngested : 'Official Documents Ingested'}
                 </span>
               </div>
               <h2 className="text-base sm:text-lg font-bold text-[#0f2d59]">
                 {activeCaseData.title}
               </h2>
-              {isSimpleMode ? (
+              {isSimpleMode || language === 'ta' ? (
                 <p className="text-xs text-blue-900 font-medium">
-                  <strong>Plain English Summary:</strong> {activeCaseData.summary}
+                  <strong>{language === 'ta' ? TAMIL_TRANSLATIONS.plainSummaryLabel : 'Plain English Summary:'}</strong>{' '}
+                  {language === 'ta' ? (TAMIL_TRANSLATIONS.caseSummaries[activeCaseData.id] || activeCaseData.summary) : activeCaseData.summary}
                 </p>
               ) : (
                 <p className="text-xs text-slate-600 leading-relaxed">
@@ -101,8 +104,12 @@ function AppContent() {
             <div className="flex items-center gap-2.5 bg-emerald-50 px-4 py-2.5 rounded-xl border border-emerald-200 shrink-0">
               <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
               <div className="text-left">
-                <div className="text-[11px] font-bold text-emerald-800">100% Groundedness Guarantee</div>
-                <div className="text-[10px] text-emerald-700">Zero Fabricated Facts or Citations</div>
+                <div className="text-[11px] font-bold text-emerald-800">
+                  {language === 'ta' ? TAMIL_TRANSLATIONS.groundednessTitle : '100% Groundedness Guarantee'}
+                </div>
+                <div className="text-[10px] text-emerald-700">
+                  {language === 'ta' ? TAMIL_TRANSLATIONS.groundednessDesc : 'Zero Fabricated Facts or Citations'}
+                </div>
               </div>
             </div>
           </div>
@@ -125,6 +132,7 @@ function AppContent() {
                 activeCase={activeCaseData}
                 onSelectCitation={handleSelectCitation}
                 isSimpleMode={isSimpleMode}
+                language={language}
               />
             )}
 
@@ -133,6 +141,7 @@ function AppContent() {
                 activeCase={activeCaseData}
                 onSelectCitation={handleSelectCitation}
                 isSimpleMode={isSimpleMode}
+                language={language}
               />
             )}
 
@@ -141,6 +150,7 @@ function AppContent() {
                 activeCase={activeCaseData}
                 onSelectCitation={handleSelectCitation}
                 isSimpleMode={isSimpleMode}
+                language={language}
               />
             )}
 
@@ -149,6 +159,7 @@ function AppContent() {
                 activeCase={activeCaseData}
                 onSelectCitation={handleSelectCitation}
                 isSimpleMode={isSimpleMode}
+                language={language}
               />
             )}
           </>
@@ -158,7 +169,7 @@ function AppContent() {
       </main>
 
       {/* 4. Official Footer */}
-      <Footer />
+      <Footer language={language} />
 
       {/* Side Evidence Inspector Drawer */}
       <EvidenceDrawer
