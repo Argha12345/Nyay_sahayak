@@ -69,13 +69,38 @@ export function AppProvider({ children }) {
       const data = await caseApi.getById(id);
       if (data.success) {
         setActiveCaseData(data.case);
+      } else {
+        // Stored ID might be from a deleted/old session
+        const allCasesRes = await caseApi.getAll();
+        if (allCasesRes.success && allCasesRes.cases.length > 0) {
+          const fallbackId = allCasesRes.cases[0].id;
+          setActiveCaseId(fallbackId);
+          const fallbackData = await caseApi.getById(fallbackId);
+          if (fallbackData.success) {
+            setActiveCaseData(fallbackData.case);
+          }
+        }
       }
     } catch (err) {
       console.error(`Error fetching case details for ${id}:`, err);
+      // Fallback to first available case
+      try {
+        const allCasesRes = await caseApi.getAll();
+        if (allCasesRes.success && allCasesRes.cases.length > 0) {
+          const fallbackId = allCasesRes.cases[0].id;
+          setActiveCaseId(fallbackId);
+          const fallbackData = await caseApi.getById(fallbackId);
+          if (fallbackData.success) {
+            setActiveCaseData(fallbackData.case);
+          }
+        }
+      } catch (fallbackErr) {
+        console.error('Fallback fetch failed:', fallbackErr);
+      }
     } finally {
       setIsLoadingCase(false);
     }
-  }, []);
+  }, [setActiveCaseId]);
 
   useEffect(() => {
     fetchCases();
