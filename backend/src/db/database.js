@@ -99,6 +99,16 @@ export function initDatabase() {
   if (caseCount === 0) {
     seedDatabase();
   }
+
+  // Ensure high-capacity 1,200+ bulk dataset is seeded
+  const statuteCount = db.prepare('SELECT COUNT(*) as count FROM statutes').get().count;
+  if (statuteCount < 100) {
+    import('./bulkDatasetSeeder.js').then(({ seedBulkLegalDataset }) => {
+      seedBulkLegalDataset();
+    }).catch(err => {
+      console.error('[SQLite] Failed to run bulk dataset seeder:', err);
+    });
+  }
 }
 
 /**

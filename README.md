@@ -33,13 +33,17 @@
 * **Side-by-Side Evidence Inspector:** Clicking any citation opens the exact source document and highlights the verbatim quote.
 
 ### 3. Authoritative Legal Research & Precedent Matching
-* **Statutory Corpus:** Pre-loaded with Bharatiya Nyaya Sanhita (BNS), Bharatiya Nagarik Suraksha Sanhita (BNSS), Bharatiya Sakshya Adhiniyam (BSA), IPC, CrPC, and Indian Contract Act 1872.
-* **Supreme Court Precedent Index:** Verified landmark judgments with authoritative SCC/AIR reporter citations:
-  * *Satender Kumar Antil v. CBI*, (2022) 10 SCC 51 (Category A bail guidelines)
-  * *Arnesh Kumar v. State of Bihar*, (2014) 8 SCC 273 (Mandatory Section 41A arrest notice)
-  * *Sanjay Chandra v. CBI*, (2012) 1 SCC 40 (Bail rule, jail exception)
-  * *Arjun Panditrao Khotkar v. Kailash Gorantyal*, (2020) 7 SCC 1 (Mandatory Section 65B electronic certificate)
-  * *ONGC v. Saw Pipes Ltd.*, (2003) 5 SCC 705 (Liquidated damages vs penalty)
+* **Mass Ingested Legal Corpus (1,200+ Verified Records):**
+  * **Bharatiya Nyaya Sanhita, 2023 (BNS):** All 358 statutory sections indexed with IPC concordance.
+  * **Bharatiya Nagarik Suraksha Sanhita, 2023 (BNSS):** All 531 procedural sections indexed with CrPC concordance.
+  * **Bharatiya Sakshya Adhiniyam, 2023 (BSA):** All 170 evidence sections indexed with IEA concordance.
+  * **Indian Contract Act, 1872 & Commercial Statutes:** 75 commercial dispute sections.
+  * **Supreme Court Precedent Index (108 Landmark Judgments):** Comprehensive ratio decidendi dataset with SCC/AIR reporter citations covering Criminal Procedure, Bail, Digital Evidence, Arbitration, Maintenance, Consumer/RERA, and Contract Law.
+* **Multi-Domain Benchmark Dossiers (4 Ingested Cases):**
+  * `CASE-CRIM-001`: State of Karnataka v. Vikramaditya Sen (Cyber Crime / Crypto Bail / Section 41A / Singapore Alibi).
+  * `CASE-COMM-002`: Apex Solutions v. Quantix Cloud (SaaS Master Agreement / S. 74 Liquidated Damages vs Lock-In).
+  * `CASE-FIN-003`: Zenith Agro Exports v. K.R. Logistics (S. 138 NI Act Cheque Bounce / Postal Delivery Limitation).
+  * `CASE-PROP-004`: Ananya Sharma v. Greenfield Developers (RERA S. 18 / Builder Delay / Pioneer Urban Unfair Terms).
 * **Agentic Factual Bridge:** Connects specific facts of the active case directly to controlling judicial tests.
 
 ### 4. Grounded RAG Chat

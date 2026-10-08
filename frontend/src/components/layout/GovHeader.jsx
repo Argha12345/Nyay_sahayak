@@ -99,9 +99,12 @@ export default function GovHeader({
                 <ShieldCheck className="w-3 h-3 text-emerald-600" />
                 <span>Zero-Fabrication</span>
               </span>
+              <span className="hidden sm:inline-flex text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 border border-blue-200">
+                1,200+ Statutes & Precedents Ingested
+              </span>
             </div>
             <p className="text-[11px] text-slate-500 font-medium">
-              National Verifiable Legal Assistant & Research Portal • VeriJuris System
+              National Verifiable Legal Assistant & Research Portal • VeriJuris SQLite Relational Knowledge Engine
             </p>
           </div>
         </div>
