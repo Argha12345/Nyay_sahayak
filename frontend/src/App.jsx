@@ -29,6 +29,8 @@ function AppContent() {
     setIsSimpleMode,
     showGuide,
     setShowGuide,
+    language,
+    setLanguage,
     isUploadOpen,
     setIsUploadOpen,
     selectedCitation,
