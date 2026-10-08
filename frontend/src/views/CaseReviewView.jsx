@@ -13,17 +13,20 @@ import {
   MapPin,
   ShieldCheck,
   AlertOctagon,
-  Scale
+  Scale,
+  Share2
 } from 'lucide-react';
 import CitationBadge from '../components/common/CitationBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import EvidenceKnowledgeGraph from '../components/knowledgeGraph/EvidenceKnowledgeGraph';
 import { reviewApi } from '../api';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
-export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleMode }) {
+export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleMode, language = 'en' }) {
+  const isTa = language === 'ta';
   const [reviewData, setReviewData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeSubTab, setActiveSubTab] = useLocalStorage('verijuris_review_subtab', 'contradictions');
+  const [activeSubTab, setActiveSubTab] = useLocalStorage('verijuris_review_subtab', 'graph');
   const [selectedDocId, setSelectedDocId] = useState(null);
 
   // Feature state
@@ -110,6 +113,21 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
       {/* Sub Tabs Pill Row */}
       <div className="flex space-x-2 text-xs font-semibold overflow-x-auto pb-1 scrollbar-none">
         <button
+          onClick={() => setActiveSubTab('graph')}
+          className={`px-3.5 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+            activeSubTab === 'graph'
+              ? 'bg-[#1d4ed8] text-white shadow-xs border border-blue-700/30'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          <Share2 className={`w-3.5 h-3.5 ${activeSubTab === 'graph' ? 'text-cyan-200' : 'text-blue-600'}`} />
+          <span>{isTa ? 'ஆதார வலைப்பின்னல் வரைபடம்' : 'Evidence Knowledge Graph'}</span>
+          <span className="px-1.5 py-0.2 rounded-full bg-cyan-100 text-cyan-800 text-[10px] font-bold">
+            Interactive
+          </span>
+        </button>
+
+        <button
           onClick={() => setActiveSubTab('contradictions')}
           className={`px-3.5 py-2 rounded-lg transition flex items-center gap-2 cursor-pointer whitespace-nowrap ${
             activeSubTab === 'contradictions'
@@ -118,7 +136,7 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
           }`}
         >
           <AlertTriangle className={`w-3.5 h-3.5 ${activeSubTab === 'contradictions' ? 'text-amber-300' : 'text-amber-600'}`} />
-          <span>{isSimpleMode ? 'Contradictions' : 'Contradiction Matrix'}</span>
+          <span>{isTa ? 'முரண்பாடுகள்' : (isSimpleMode ? 'Contradictions' : 'Contradiction Matrix')}</span>
           <span className="px-1.5 py-0.2 rounded-full bg-red-100 text-red-800 text-[10px]">
             {contradictions.totalDetected}
           </span>
@@ -214,6 +232,17 @@ export default function CaseReviewView({ activeCase, onSelectCitation, isSimpleM
           </span>
         </button>
       </div>
+
+      {/* Sub-Tab 0: Interactive Knowledge Graph Visualizer */}
+      {activeSubTab === 'graph' && (
+        <EvidenceKnowledgeGraph
+          caseData={activeCase}
+          contradictions={contradictions?.contradictions || []}
+          onSelectCitation={onSelectCitation}
+          isSimpleMode={isSimpleMode}
+          language={language}
+        />
+      )}
 
       {/* Sub-Tab 1: Contradiction Matrix */}
       {activeSubTab === 'contradictions' && (

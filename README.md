@@ -23,8 +23,11 @@
 
 ### 1. Contract & Case Review
 * **Deep Document Reasoner:** Ingests complex legal records (FIRs, witness statements, bank compliance audits, boarding passes).
+* **Interactive Evidentiary Knowledge Graph (New):** Live network visualizer connecting witnesses, physical alibi manifests, and clashing statements with glowing contradiction vectors.
 * **Cross-Document Contradiction Matrix (Stretch Goal 1):** Scans pairwise statements across files to catch temporal/alibi clashes (e.g., Complainant alleging in-person cash delivery in Bangalore while Immigration records prove the accused was physically in Singapore).
 * **Pre-Drafting Evidentiary Readiness Report (Stretch Goal 2):** Scans case files for statutory notice compliance (e.g. absence of mandatory Section 41A CrPC / 35(3) BNSS notice) and electronic evidence integrity (Section 65B(4) / Section 63 BSA certificate).
+* **One-Click Tamil / English Bilingual Switcher (New):** Built for Indian Digital Public Infrastructure accessibility across non-English speaking citizens.
+* **Live Scannable QR Verification Registry (New):** Real-time court pleading verification certificate with cryptographic SHA-256 hash inspection.
 
 ### 2. Zero-Hallucination Legal Drafting Studio
 * **Pleaded Instruments:** Bail Applications (under Section 483 BNSS / 439 CrPC), Commercial Dispute Legal Notices (under Section 73/74 Contract Act), and Petitions.

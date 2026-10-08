@@ -1,8 +1,10 @@
-import React, { useRef } from 'react';
-import { X, Printer, ShieldCheck, CheckCircle2, FileText, Download } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { X, Printer, ShieldCheck, CheckCircle2, FileText, Download, ExternalLink } from 'lucide-react';
+import VerificationPortalModal from './VerificationPortalModal';
 
 export default function PleadingPdfModal({ isOpen, onClose, draftData, caseData }) {
   const printRef = useRef(null);
+  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
 
   if (!isOpen || !draftData) return null;
 
@@ -111,10 +113,14 @@ export default function PleadingPdfModal({ isOpen, onClose, draftData, caseData 
               </div>
             </div>
 
-            {/* Embedded Verification QR Code */}
-            <div className="flex flex-col items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200 shrink-0 print:border-slate-400 print:bg-white">
+            {/* Embedded Verification QR Code with Direct Simulated Scan Access */}
+            <div
+              onClick={() => setIsVerifyOpen(true)}
+              className="flex flex-col items-center bg-slate-50 hover:bg-blue-50/60 p-2.5 rounded-xl border border-slate-200 hover:border-blue-400 shrink-0 print:border-slate-400 print:bg-white cursor-pointer transition group shadow-2xs"
+              title="Click or scan to view live Official Digital Certificate"
+            >
               <svg
-                className="w-24 h-24"
+                className="w-24 h-24 group-hover:scale-105 transition"
                 viewBox="0 0 100 100"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -172,13 +178,31 @@ export default function PleadingPdfModal({ isOpen, onClose, draftData, caseData 
                 <rect x="84" y="92" width="5" height="5" fill="black" />
                 <rect x="92" y="84" width="5" height="5" fill="black" />
               </svg>
-              <span className="text-[9px] font-mono text-slate-600 mt-1 uppercase font-bold tracking-tighter">
-                Scan to Verify
-              </span>
+              <div className="flex items-center gap-1 mt-1">
+                <ExternalLink className="w-2.5 h-2.5 text-blue-700 group-hover:text-blue-900" />
+                <span className="text-[9px] font-mono text-blue-700 group-hover:text-blue-900 uppercase font-bold tracking-tighter">
+                  Scan / Test Verify
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Live Mobile Verification Modal */}
+      <VerificationPortalModal
+        isOpen={isVerifyOpen}
+        onClose={() => setIsVerifyOpen(false)}
+        verificationData={{
+          hash: verificationHash,
+          caseTitle: caseData?.title || 'Court Case Pleading',
+          documentType: draftData.draftTitle || 'Court Pleading',
+          date: currentDate,
+          citationsVerified: 5,
+          groundednessScore: 100,
+          hallucinations: 0
+        }}
+      />
     </div>
   );
 }

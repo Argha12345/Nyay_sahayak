@@ -1,5 +1,6 @@
 import React from 'react';
-import { ShieldCheck, Upload, Scale, HelpCircle } from 'lucide-react';
+import { ShieldCheck, Upload, Scale, HelpCircle, Languages } from 'lucide-react';
+import { TAMIL_TRANSLATIONS } from '../../utils/tamilLocale';
 
 export default function GovHeader({
   activeTab,
@@ -14,7 +15,12 @@ export default function GovHeader({
   setIsSimpleMode,
   showGuide,
   setShowGuide,
+  language = 'en',
+  setLanguage,
 }) {
+  const isTa = language === 'ta';
+  const t = TAMIL_TRANSLATIONS;
+
   return (
     <header className="w-full bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
       {/* 1. Tricolour Ribbon at top */}
@@ -24,13 +30,29 @@ export default function GovHeader({
       <div className="bg-[#0f2d59] text-white text-[11px] px-4 sm:px-8 py-1.5 flex flex-wrap items-center justify-between gap-3">
         {/* Left: Government of India / Ministry */}
         <div className="flex items-center gap-2 sm:gap-3 font-medium">
-          <span className="font-semibold text-slate-100">Government of India</span>
+          <span className="font-semibold text-slate-100">{isTa ? t.govIndia : 'Government of India'}</span>
           <span className="text-slate-400">•</span>
-          <span className="text-slate-200 hidden sm:inline">Ministry of Law and Justice (Department of Justice)</span>
+          <span className="text-slate-200 hidden sm:inline">
+            {isTa ? t.ministry : 'Ministry of Law and Justice (Department of Justice)'}
+          </span>
         </div>
 
         {/* Right: Accessibility Controls */}
         <div className="flex items-center gap-3 sm:gap-4">
+          {/* Tamil / English Bilingual Language Toggle */}
+          <button
+            onClick={() => setLanguage && setLanguage(isTa ? 'en' : 'ta')}
+            className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold transition cursor-pointer border shadow-2xs ${
+              isTa
+                ? 'bg-amber-400 text-slate-950 border-amber-300'
+                : 'bg-white/10 text-slate-200 border-white/20 hover:bg-white/20'
+            }`}
+            title="Toggle Language between English and தமிழ் (Tamil) for Citizen Accessibility"
+          >
+            <Languages className="w-3.5 h-3.5" />
+            <span>{isTa ? 'English (Switch)' : 'தமிழ் (Tamil)'}</span>
+          </button>
+
           {/* Simple Citizen Mode Toggle */}
           <button
             onClick={() => setIsSimpleMode(!isSimpleMode)}
@@ -42,7 +64,11 @@ export default function GovHeader({
             title="Toggle between Simple Plain-English Mode and Advocate Legal Pro Mode"
           >
             <span className={`w-2 h-2 rounded-full ${isSimpleMode ? 'bg-emerald-400' : 'bg-slate-300'}`} />
-            <span>{isSimpleMode ? 'Simple Citizen Mode (Plain English)' : 'Advocate Pro Mode'}</span>
+            <span>
+              {isSimpleMode
+                ? isTa ? t.simpleCitizenMode : 'Simple Citizen Mode (Plain English)'
+                : isTa ? t.proMode : 'Advocate Pro Mode'}
+            </span>
           </button>
 
           {/* Quick Guide / Help Button */}
@@ -52,7 +78,11 @@ export default function GovHeader({
             title="Show 60-Second Beginners Guide"
           >
             <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
-            <span>{showGuide ? 'Hide Guide' : 'How it Works'}</span>
+            <span>
+              {showGuide
+                ? isTa ? t.hideGuide : 'Hide Guide'
+                : isTa ? t.howItWorks : 'How it Works'}
+            </span>
           </button>
 
           {/* Text Size Adjuster (A- / A / A+) */}
@@ -93,18 +123,18 @@ export default function GovHeader({
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-bold text-lg sm:text-xl text-[#0f2d59] tracking-tight">
-                e-Nyay Sahayak
+                {isTa ? t.portalTitle : 'e-Nyay Sahayak'}
               </h1>
               <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 flex items-center gap-1">
                 <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                <span>Zero-Fabrication</span>
+                <span>{isTa ? t.zeroFabrication : 'Zero-Fabrication'}</span>
               </span>
               <span className="hidden sm:inline-flex text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 border border-blue-200">
-                1,200+ Statutes & Precedents Ingested
+                {isTa ? t.statutesCountBadge : '1,200+ Statutes & Precedents Ingested'}
               </span>
             </div>
             <p className="text-[11px] text-slate-500 font-medium">
-              National Verifiable Legal Assistant & Research Portal • VeriJuris SQLite Relational Knowledge Engine
+              {isTa ? t.portalSubtitle : 'National Verifiable Legal Assistant & Research Portal • VeriJuris SQLite Relational Knowledge Engine'}
             </p>
           </div>
         </div>
@@ -113,7 +143,7 @@ export default function GovHeader({
         <div className="flex items-center gap-3">
           {/* Active Case Selector */}
           <div className="flex items-center bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-700 shadow-xs">
-            <span className="text-slate-500 mr-2 text-[11px] font-medium">Active Case:</span>
+            <span className="text-slate-500 mr-2 text-[11px] font-medium">{isTa ? t.activeCase : 'Active Case:'}</span>
             <select
               value={activeCase?.id || ''}
               onChange={(e) => onSelectCase(e.target.value)}
@@ -134,7 +164,7 @@ export default function GovHeader({
             title="Upload new FIR, petition, or contract file"
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Upload Case / e-Filing</span>
+            <span>{isTa ? t.uploadCase : 'Upload Case / e-Filing'}</span>
           </button>
         </div>
       </div>
@@ -143,11 +173,11 @@ export default function GovHeader({
       <div className="bg-[#f8fafc] border-t border-slate-200 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex space-x-1 sm:space-x-2 overflow-x-auto scrollbar-none py-1">
           {[
-            { id: 'review', label: '1. Case & Contract Review', simpleLabel: '1. Fact & Contradiction Check', badge: 'Stretch 1 & 2' },
-            { id: 'drafting', label: '2. Legal Drafting Studio', simpleLabel: '2. Ready-to-File Documents', badge: '100% Verified' },
-            { id: 'research', label: '3. Statutes & Precedents', simpleLabel: '3. Legal Laws & Case Laws', badge: 'SCC Reports' },
-            { id: 'chat', label: '4. Grounded Legal Q&A Chat', simpleLabel: '4. Ask Questions with Proof', badge: 'Anti-Hallucination' },
-            { id: 'ablation', label: '5. Ablation Benchmark (25%)', simpleLabel: '5. Compare with Ordinary AI', badge: 'vs Naive RAG' },
+            { id: 'review', label: isTa ? t.tab1 : '1. Case & Contract Review', simpleLabel: isTa ? t.tab1 : '1. Fact & Contradiction Check', badge: 'Stretch 1 & 2' },
+            { id: 'drafting', label: isTa ? t.tab2 : '2. Legal Drafting Studio', simpleLabel: isTa ? t.tab2 : '2. Ready-to-File Documents', badge: '100% Verified' },
+            { id: 'research', label: isTa ? t.tab3 : '3. Statutes & Precedents', simpleLabel: isTa ? t.tab3 : '3. Legal Laws & Case Laws', badge: 'SCC Reports' },
+            { id: 'chat', label: isTa ? t.tab4 : '4. Grounded Legal Q&A Chat', simpleLabel: isTa ? t.tab4 : '4. Ask Questions with Proof', badge: 'Anti-Hallucination' },
+            { id: 'ablation', label: isTa ? t.tab5 : '5. Ablation Benchmark (25%)', simpleLabel: isTa ? t.tab5 : '5. Compare with Ordinary AI', badge: 'vs Naive RAG' },
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (

@@ -16,6 +16,7 @@ export function AppProvider({ children }) {
   const [fontSize, setFontSize] = useLocalStorage('verijuris_font_size', 14);
   const [isSimpleMode, setIsSimpleMode] = useLocalStorage('verijuris_simple_mode', true);
   const [showGuide, setShowGuide] = useLocalStorage('verijuris_show_guide', true);
+  const [language, setLanguage] = useLocalStorage('verijuris_language', 'en'); // 'en' | 'ta'
 
   // Modals & Drawers
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -114,6 +115,8 @@ export function AppProvider({ children }) {
     setIsSimpleMode,
     showGuide,
     setShowGuide,
+    language,
+    setLanguage,
     isUploadOpen,
     setIsUploadOpen,
     selectedCitation,

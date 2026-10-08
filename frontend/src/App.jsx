@@ -54,6 +54,8 @@ function AppContent() {
         setIsSimpleMode={setIsSimpleMode}
         showGuide={showGuide}
         setShowGuide={setShowGuide}
+        language={language}
+        setLanguage={setLanguage}
       />
 
       {/* 2. Main Portal Container */}
@@ -112,6 +114,7 @@ function AppContent() {
                 activeCase={activeCaseData}
                 onSelectCitation={handleSelectCitation}
                 isSimpleMode={isSimpleMode}
+                language={language}
               />
             )}
 
