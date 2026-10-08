@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Scale, ShieldCheck, AlertOctagon, FileCheck, Copy, RefreshCw, Info } from 'lucide-react';
+import { Scale, ShieldCheck, AlertOctagon, FileCheck, Copy, RefreshCw, Info, FileDown } from 'lucide-react';
 import CitationBadge from '../components/common/CitationBadge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import PleadingPdfModal from '../components/modals/PleadingPdfModal';
 import { draftApi } from '../api';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
@@ -21,6 +22,7 @@ export default function DraftingStudioView({ activeCase, onSelectCitation, isSim
   const [draftData, setDraftData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
   // Sync default template when activeCase changes if not set
   useEffect(() => {
@@ -179,6 +181,14 @@ export default function DraftingStudioView({ activeCase, onSelectCitation, isSim
               </div>
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => setIsPdfModalOpen(true)}
+                  className="px-3 py-1.5 rounded-lg text-blue-800 hover:text-blue-950 bg-blue-50 hover:bg-blue-100 transition cursor-pointer text-xs flex items-center gap-1.5 border border-blue-200 font-semibold"
+                  title="Export Court Pleading with QR Code"
+                >
+                  <FileDown className="w-3.5 h-3.5 text-blue-700" />
+                  <span>Export Court PDF</span>
+                </button>
+                <button
                   onClick={handleCopy}
                   className="px-3 py-1.5 rounded-lg text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 transition cursor-pointer text-xs flex items-center gap-1.5 border border-slate-300"
                   title="Copy full text"
@@ -302,6 +312,14 @@ export default function DraftingStudioView({ activeCase, onSelectCitation, isSim
           </div>
         </div>
       ) : null}
+
+      {/* Official Court Pleading PDF & Print Modal with QR Verification */}
+      <PleadingPdfModal
+        isOpen={isPdfModalOpen}
+        onClose={() => setIsPdfModalOpen(false)}
+        draftData={draftData}
+        caseData={activeCase}
+      />
     </div>
   );
 }

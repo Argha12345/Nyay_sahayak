@@ -1,6 +1,7 @@
 import { documentStore } from '../../services/documentStore.js';
 import { contradictionEngine } from '../../services/contradictionEngine.js';
 import { missingInfoEngine } from '../../services/missingInfoEngine.js';
+import { caseReviewInsightsEngine } from '../../services/caseReviewInsightsEngine.js';
 
 export const reviewController = {
   getReviewAnalysis(req, res, next) {
@@ -28,6 +29,9 @@ export const reviewController = {
             verbatimSpan: c.text.length > 80 ? c.text.substring(0, 80) : c.text
           }));
 
+      // 4. Case Review Strategic Insights (Timeline, Cross-Exam Questions, Side-by-Side Diff Pairs)
+      const insights = caseReviewInsightsEngine.generateInsights(targetCase.id);
+
       res.json({
         success: true,
         caseId: targetCase.id,
@@ -36,6 +40,9 @@ export const reviewController = {
         keyFacts: facts,
         contradictions,
         missingInfoAudit,
+        timeline: insights.timeline,
+        crossExaminationQuestions: insights.crossExaminationQuestions,
+        diffPairs: insights.diffPairs,
         totalDocuments: targetCase.documents?.length || 0,
         documentsList: (targetCase.documents || []).map((d) => ({
           id: d.id,
